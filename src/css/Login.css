@@ -1,0 +1,15 @@
+.loging_container{
+    position: relative;
+    height: 100vh;
+}
+
+.loging_card{
+   
+    width: 18rem;
+    margin: 0 auto;
+    margin-top: 4rem; 
+}
+
+.title{
+    text-align: center;
+}
