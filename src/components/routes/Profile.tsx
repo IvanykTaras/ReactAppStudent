@@ -188,7 +188,7 @@ export const Profile: FC = ()=>{
                             />
                         </InputGroup>
                     </td>
-                ): <td onClick={()=>setEditUser({...editUser, editName: true })}>{userData.name}</td>}
+                ): <td onClick={()=>setEditUser({...editUser, editName: true })} style={{cursor: "pointer"}}>{userData.name}</td>}
                 
                 {editUser.editUserName ? (
                     <td>
@@ -200,7 +200,7 @@ export const Profile: FC = ()=>{
                             onChange={e=>setEditUser({...editUser, userName: e.target.value})}
                             />
                         </InputGroup>
-                    </td>): <td onClick={()=>setEditUser({...editUser, editUserName: true })}>{userData.username}</td> 
+                    </td>): <td onClick={()=>setEditUser({...editUser, editUserName: true })} style={{cursor: "pointer"}}>{userData.username}</td> 
                 }
                 
                 
