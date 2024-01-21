@@ -4,4 +4,4 @@ export type Comment = {
     body: string;
     email: string;
     name: string;
-}
+} 

@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 
 import "../../css/Register.css"
 import { RegisterFormData } from "../../model/RegisterFormData";
 import { object, string } from "yup";
-import { db } from "../../db";
 import { User } from "../../model/User";
+import { dbContext, tapeContext } from "./App";
+import { tapeTypes } from "../../model/tapeTypes";
 
 export const Register: FC = ()=>{
 
@@ -24,6 +25,8 @@ export const Register: FC = ()=>{
         password: string().required()
     });
 
+    const db = useContext(dbContext);
+    const [tape,setTape] = useContext(tapeContext);
     const [errorMessage, setErrorMessage] = useState<string|null>(null);
     const [isUserCreated, setIsUserCreated] = useState<boolean>(false);
     const [formData,setFormData] = useState<RegisterFormData>({
@@ -64,10 +67,10 @@ export const Register: FC = ()=>{
         const status = await validUserData(form);
 
         let emailExist = false;
-        for (let e of db.users) {
+        for (let e of db.db.users) {
             const userElement: User = e;
 
-            if(form.email == userElement.email){
+            if(form.email === userElement.email){
                 setErrorMessage("Email exist pls use another");
                 emailExist = true;
                 break;
@@ -75,15 +78,20 @@ export const Register: FC = ()=>{
         }
 
         if(!emailExist && status){
-            const lastUser:User = db.users[db.users.length - 1];
+            const lastUser:User = db.db.users[db.db.users.length - 1];
 
             const createUser:User = {
                 id: lastUser.id + 1,
                 bs: "",
+                photos: [],
+                posts: [],
                 ...form
             };
             
-            db.users.push(createUser);
+            db.db.users.push(createUser);
+            db.setDb({...db.db})
+            setTape({type: tapeTypes.userCreated, item: createUser.email});
+            console.log(db.db.users)
             setIsUserCreated(true);
              
         }
@@ -92,7 +100,7 @@ export const Register: FC = ()=>{
 
     return <>
     <h1 className="title">Register</h1>
-    <Container className="loging_container mt-5">
+    <Container className=" mt-5">
         
         <Card className="loging_card">
             <Card.Body>

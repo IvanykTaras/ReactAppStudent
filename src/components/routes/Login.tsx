@@ -1,21 +1,30 @@
-import {FC, useEffect, useState} from "react";
+import {FC, useEffect, useState, useContext} from "react";
 import { Alert, Button, Card, Container, Form } from "react-bootstrap";
 import { object, string, number, date, InferType } from 'yup';
 
 import "../../css/Login.css";
 import { UserFormData } from "../../model/UserFormData";
-import { db } from "../../db";
 import { User } from "../../model/User";
+import { useNavigate } from "react-router-dom";
+import { dbContext, tapeContext, userIdContext } from "./App";
+import { useTape } from "../../hooks/useTape";
+import { tapeTypes } from "../../model/tapeTypes";
+
+
+
 export const Login: FC = ()=>{
 
 
+    
 
     let userSchema = object({
         email: string().required().email(),
         password: string().required()
     });
 
-    
+    const navigate = useNavigate();
+
+    const [tape, setTape] = useContext(tapeContext);
 
     const [userData, setUserData] = useState<UserFormData>({
         email: "",
@@ -23,8 +32,9 @@ export const Login: FC = ()=>{
     });
 
     const [errorMessage, setErrorMessage] = useState<string|null>(null);
-
-  
+   
+    const userId = useContext(userIdContext);
+    const db = useContext(dbContext);
 
     
     async function validUserData(user:UserFormData) {
@@ -57,10 +67,12 @@ export const Login: FC = ()=>{
 
     function LogIn(user:UserFormData){
         
+        console.log(db.db);
+        
         setErrorMessage(null);
         validUserData(user);
 
-        for (let e of db.users) {
+        for (let e of db.db.users) {
             const userElement: User = e;
             
             if(
@@ -68,18 +80,23 @@ export const Login: FC = ()=>{
                 user.password == userElement.password
             ){
                 setErrorMessage(null);
-                localStorage.setItem("user",String(userElement.id));
+                userId.setId(userElement.id);
+                setTape({type: tapeTypes.logedIn ,item: userElement.email});
+                console.log(db.db.users)
+                navigate("/");
                 break;
             }else{
                 setErrorMessage("email or password is incorrect"); 
              }            
         }
+
+        
     }
 
 
     return (<>
-    <h1 className="title">Register</h1>
-    <Container className="loging_container">
+    <h1 className="title">Login</h1>
+    <Container>
         
         <Card className="loging_card">
             <Card.Body>
@@ -116,7 +133,7 @@ export const Login: FC = ()=>{
                         />
                     </Form.Group>
                 </Form>
-                <Button onClick={()=>LogIn(userData)} variant="primary">Login</Button>
+                <Button onClick={()=>LogIn(userData)}  variant="primary">Login</Button>
             </Card.Body>
         </Card>
     </Container>

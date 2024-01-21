@@ -1,0 +1,1 @@
+export type tapeItem = string | number;

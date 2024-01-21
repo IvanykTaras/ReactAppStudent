@@ -12,4 +12,6 @@ export type User = {
     nameOfCompany: string;
     email: string;
     password: string;
+    photos: number[];
+    posts: number[];
 }
